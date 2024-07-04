@@ -11,7 +11,7 @@ selected_month = st.sidebar.selectbox('Select a month', months)
 selected_year = st.sidebar.selectbox('Select a year', years)
 
 # Filter based on the user selection
-filtered_df = df2[(df2['Month'] == selected_month) & (df2['Year'] == selected_year)]
+filtered_df = grouped_dgf[(grouped_dgf['Month'] == selected_month) & (grouped_dgf['Year'] == selected_year)]
 
 fig = plot_distribution(filtered_df, 'Timestamp_Diff', min_count=5)
 st.plotly_chart(fig)

@@ -503,18 +503,47 @@ def total_machining_per_program(df):
     return total_machining_df
 
 
-def group_and_sum(df, group_column, sum_column):
-    output_df = df.groupby(group_column)[sum_column].sum().reset_index()
+# def group_and_sum(df, group_column, sum_column):
+#     output_df = df.groupby(group_column)[sum_column].sum().reset_index()
+#     return output_df
+
+
+def group_and_sum(df, timestamp_column, group_column, sum_column):
+    # Creating a 'Date' column with year-month format:
+    df['Date'] = pd.to_datetime(df[timestamp_column]).dt.to_period('M').dt.to_timestamp()
+
+    output_df = df.groupby([group_column, 'Date'])[sum_column].sum().reset_index()
+
     return output_df
 
 
-def transform_data(df):
+# def transform_data(df):
+#     df['Time (min)'] = df['total_machining'] / df['Programas cortados']
+#
+#     df.drop(['timestamp', 'program', 'Horas Teoricas', 'Horas Reales',
+#              'Diferencia', 'Programas cortados', 'total_machining'], axis=1, inplace=True)
+#
+#     df_grouped = df.groupby('Espesor').agg({'Longitude Corte (m)': 'sum', 'Time (min)': 'sum'})
+#     df_reset = df_grouped.reset_index()
+#
+#     df_reset['Velocidad (m/min)'] = round(df_reset['Longitude Corte (m)'] / df_reset['Time (min)'], 2)
+#     df_reset = df_reset.sort_values(by='Espesor', ascending=True)
+#
+#     return df_reset
+
+import pandas as pd
+
+import pandas as pd
+
+
+def transform_data(df, timestamp_column):
     df['Time (min)'] = df['total_machining'] / df['Programas cortados']
+    df['Date'] = pd.to_datetime(df[timestamp_column]).dt.to_period('M').dt.to_timestamp()
 
     df.drop(['timestamp', 'program', 'Horas Teoricas', 'Horas Reales',
              'Diferencia', 'Programas cortados', 'total_machining'], axis=1, inplace=True)
 
-    df_grouped = df.groupby('Espesor').agg({'Longitude Corte (m)': 'sum', 'Time (min)': 'sum'})
+    df_grouped = df.groupby(['Espesor', 'Date']).agg({'Longitude Corte (m)': 'sum', 'Time (min)': 'sum'})
     df_reset = df_grouped.reset_index()
 
     df_reset['Velocidad (m/min)'] = round(df_reset['Longitude Corte (m)'] / df_reset['Time (min)'], 2)

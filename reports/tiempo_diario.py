@@ -17,7 +17,7 @@ selected_month = st.sidebar.selectbox('Select a month', months)
 selected_year = st.sidebar.selectbox('Select a year', years)
 
 # Filter based on the user selection
-filtered_df = grouped_df[(grouped_df['Month'] == selected_month) & (grouped_df['Year'] == selected_year)]
+filtered_df = grouped_dgf[(grouped_dgf['Month'] == selected_month) & (grouped_dgf['Year'] == selected_year)]
 
 
 fig = plot_daily_time(filtered_df, selected_month)

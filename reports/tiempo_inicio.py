@@ -14,7 +14,7 @@ selected_month = st.sidebar.selectbox('Select a month', months)
 selected_year = st.sidebar.selectbox('Select a year', years)
 
 # Filter based on the user selection
-filtered_df = df_first_occurrence[(df_first_occurrence['Month'] == selected_month) & (df_first_occurrence['Year'] == selected_year)]
+filtered_df = grouped_dgf[(grouped_dgf['Month'] == selected_month) & (grouped_dgf['Year'] == selected_year)]
 
 fig = plot_time(filtered_df)
 st.plotly_chart(fig)

@@ -136,17 +136,20 @@ def plot_distribution(df, column, min_count=5):
             yref='paper',
             line=dict(
                 color="Red",
-                width=3   # Makes the line thicker.
+                width=3,   # Makes the line thicker.,
+                dash='dash'
             ),
             row=i,
             col=1
         )
 
         # Update yaxis properties
-        fig.update_yaxes(title_text="# repeticiones", row=i, col=1)
 
         # Update xaxis properties
-        fig.update_xaxes(title_text="Tiempo entre cortes", row=i, col=1)
+
+        fig.update_xaxes(title_text="Tiempo entre cortes", title_font=dict(size=18, color='black', family="Courier New, monospace"),
+                         row=i, col=1)
+        fig.update_yaxes(title_text="# repeticiones", title_font=dict(size=18, color='black', family="Courier New, monospace"), row=i, col=1)
 
         # Create a dummy scatter plot to add the mean value to the legend
         # Note: The point of this scatter plot is invisible
@@ -162,6 +165,9 @@ def plot_distribution(df, column, min_count=5):
             name=f'Promedio: {mean_value:.2f}, minutos',  # this will appear in the legend
         )
         fig.add_trace(trace, row=i, col=1)
+        fig.update_layout(
+            title_x=0.5  # Center title
+        )
 
         # Update layout properties
         fig.update_layout(height=400 * len(months), width=800, showlegend=True,
@@ -216,25 +222,31 @@ def plot_time(df):
         mean_line = go.Scatter(x=[df_month.index.day.min(), df_month.index.day.max()],
                                y=[mean_datetime, mean_datetime],
                                mode='lines',
-                               name=f'Mean: {mean_datetime.time()}',
-                               line=dict(color='red'))
+                               name=f'Promedio: {mean_datetime.time()}',
+                               line=dict(color='red', dash='dash'))
 
         fig.add_trace(mean_line, row=i, col=1)
 
-        # Update xaxis and yaxis properties
-        fig.update_xaxes(title_text='Day', row=i, col=1)
-        fig.update_yaxes(title_text='Hour of day', tickformat='%H:%M:%S',
-                         range=['00:00:00', '23:59:59'], row=i, col=1)
+
+        fig.update_xaxes(title_text='Day', title_font=dict(size=18, color='black', family="Courier New, monospace"),
+                         row=i, col=1)
+        fig.update_yaxes(title_text='Hour of day', tickformat='%H:%M:%S', range=['00:00:00', '23:59:59'],
+                         title_font=dict(size=18, color='black', family="Courier New, monospace"), row=i, col=1)
 
 
         fig.update_layout(
             height=550 * len(months),
+            title_x=0.5,  # Center title
             width=1000,
             showlegend=True,
-            title_text=f'Tiempo de inicio del Laser for {month.strftime("%B %Y")}',
+            title_text=f'Tiempo de inicio del Laser en: {month.strftime("%B %Y")}',
             plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
             paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
         )
+        fig.update_layout(
+            title_x=0.5  # Center title
+        )
+
 
     return fig
 
@@ -306,11 +318,13 @@ def create_barplot(df, x_col, y_col, x_title, y_title):
                  color=x_col,
                  # pattern_shape=x_col,
                  # pattern_shape_sequence=[".", "x", "+"],
-                 labels={x_col: x_title, y_col: y_title},
-                 title=f'{x_title} by {y_title}')
+                 # labels={x_col: x_title, y_col: y_title},
+                 title=f'{x_title} Vs {y_title}')
     fig.update_layout(autosize=False, width=1200, height=800)
     fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-
+    fig.update_layout(
+        title_x=0.5  # Center title
+    )
 
     fig.update_layout(
         autosize=False,
@@ -318,6 +332,11 @@ def create_barplot(df, x_col, y_col, x_title, y_title):
         plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
         paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
     )
+
+    fig.update_xaxes(title_text=x_title,
+                     title_font=dict(size=18, color='black', family="Courier New, monospace"))
+    fig.update_yaxes(title_text=y_title,
+                     title_font=dict(size=18, color='black', family="Courier New, monospace"))
 
     fig.update_xaxes(tickangle=45)
 
@@ -328,15 +347,12 @@ def create_barplot(df, x_col, y_col, x_title, y_title):
     return fig
 
 def sunburst_plot(df: pd.DataFrame, options: list):
-    longitud_total = round(sum(df['Longitude Corte (m)']), 2)
-    tiempo_total = round(sum(df['Time (min)']), 2)
+
     df = df.loc[df.index.repeat(len(options))].reset_index(drop=True)
     df['Option'] = options * len(df['Espesor'].unique())
 
-    print(longitud_total, tiempo_total)
-    print(df.head())
-    name_var = (f"Longitud: {longitud_total}\n"
-                f"Tiempo: {tiempo_total}")
+
+
     df['root'] = "Espesor"
 
     df['Value'] = df.apply(lambda row: round(row[row['Option']], 2), axis=1)
@@ -355,11 +371,15 @@ def sunburst_plot(df: pd.DataFrame, options: list):
         autosize=True,
         width=800,
         height=800,
+        title_text=f'Resumen',
         coloraxis_colorbar=dict(
             orientation="h",
             yanchor="bottom",
             y=-0.3,
         )
+    )
+    fig.update_layout(
+        title_x=0.5  # Center title
     )
 
     return fig
@@ -384,13 +404,33 @@ def plot_daily_time(filtered_df, selected_month):
         )
     )
 
+    # Calculate time average
+    time_avg = filtered_df["Time"].mean()
+
+    # Add time average trace to the plot
+    fig.add_trace(
+        go.Scatter(
+            x=filtered_df["Date"],
+            y=[time_avg]*len(filtered_df["Date"]),
+            mode='lines',
+            name=f'Promedio: {round(time_avg, 2)}',
+            line=dict(color='red', dash='dash')
+        )
+    )
+
     fig.update_layout(
         height=550,
         width=1000,
         showlegend=True,
-        title_text=f'Tiempo de Diario del mes {selected_month}',
+        title_text=f'Tiempo/Dia del mes {selected_month}',
         plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
         paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
     )
-
+    fig.update_xaxes(title_text="Time",
+                     title_font=dict(size=18, color='black', family="Courier New, monospace"))
+    fig.update_yaxes(title_text="Date",
+                     title_font=dict(size=18, color='black', family="Courier New, monospace"))
+    fig.update_layout(
+        title_x=0.5  # Center title
+    )
     return fig
