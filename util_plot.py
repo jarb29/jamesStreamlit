@@ -7,7 +7,6 @@ import plotly.express as px
 def plot_per_month(df):
     import matplotlib.pyplot as plt
     import seaborn as sns
-
     # Set Date as index for easy resampling
     df.set_index('Date', inplace=True)
 
