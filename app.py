@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 import altair as alt
 from util_functions import *
@@ -5,6 +6,8 @@ from util_plot import *
 
 
 original_df = pd.read_csv('data/saved_df.csv')
+corte_sap = pd.read_excel('data/CORTE_SAP.xlsx')
+original_df_tiempo = pd.read_excel('data/tiempo_final.xlsx')
 
 # first plot tiempo_diario
 grouped_df = group_by_date(original_df)
@@ -31,7 +34,7 @@ df_4 = df_4.sort_values(by="total_machining")
 
 ##############################################
 
-original_df_tiempo = pd.read_excel('data/tiempo_final.xlsx')
+
 tiempo_total_df = group_and_sum(original_df_tiempo, 'timestamp', 'Espesor', 'Programas cortados')
 df_reset = transform_data(original_df_tiempo, 'timestamp')
 df_reset = pd.merge(tiempo_total_df , df_reset, on='Espesor')
@@ -39,22 +42,15 @@ df_reset = df_reset.drop(columns='Date_y')  # drop one of the month columns
 df_reset = df_reset.rename(columns={'Date_x': 'Date'})  # rename 'month_x' to 'Month'
 df_5, m5, y5 = extract_month_year(df_reset)
 
+#################################################
 
-# if "logged_in" not in st.session_state:
-#     st.session_state.logged_in = False
-#
-# def login():
-#     if st.button("Log in"):
-#         st.session_state.logged_in = True
-#         st.rerun()
-#
-# def logout():
-#     if st.button("Log out"):
-#         st.session_state.logged_in = False
-#         st.rerun()
+corte_sap['Date'] = pd.to_datetime(corte_sap['Fec.Produc'], format='%d.%m.%Y')
+df_6, m6, y6 = extract_month_year(corte_sap)
 
-# login_page = st.Page(login, title="Log in", icon=":material/login:")
-# logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
+
+
+
+
 st.set_page_config(
     page_title="Kupfer Nave1/Laser Dashboard",
     page_icon="📉",
@@ -68,89 +64,66 @@ with st.sidebar:
     selected_month = st.sidebar.selectbox('Select a month', months)
     selected_year = st.sidebar.selectbox('Select a year', years)
 
-# dashboard = st.Page(
-#     "reports/tiempo_inicio.py", title="Tiempo de inicio", icon=":material/dashboard:", default=True
-# )
-# bugs = st.Page("reports/tiempo_entre_cortes.py", title="Tiempo entre inicio de cortes", icon=":material/bug_report:")
-# alerts = st.Page(
-#     "reports/tiempo_diario.py", title="Tiempo/Dia", icon=":material/notification_important:"
-# )
-# tiempo = st.Page(
-#     "reports/tiempo_programa.py", title="Tiempo/Programa", icon=":material/notification_important:"
-# )
-# reporte = st.Page(
-#     "reports/reporte.py", title="Reporte", icon=":material/history:"
-# )
-# search = st.Page("tools/search.py", title="Search", icon=":material/search:")
-# history = st.Page("tools/history.py", title="History", icon=":material/history:")
-#
-# # if st.session_state.logged_in:
-# pg = st.navigation(
-#         {
-#             # "Account": [logout_page],
-#             "Informe": [dashboard, bugs, alerts, tiempo, reporte],
-#             # "Tools": [search, history],
-#         }
-#     )
-# else:
-#     pg = st.navigation([login_page])
+
+
+
 
 #######################
 # Dashboard Main Panel
-col = st.columns((1, 4, 4), gap='medium')
+col = st.columns((2, 4, 4), gap='medium')
 
 with col[0]:
-    st.markdown('#### Gains/Losses')
 
-    # df_population_difference_sorted = calculate_population_difference(df_reshaped, selected_year)
-    #
-    # if selected_year > 2010:
-    #     first_state_name = df_population_difference_sorted.states.iloc[0]
-    #     first_state_population = format_number(df_population_difference_sorted.population.iloc[0])
-    #     first_state_delta = format_number(df_population_difference_sorted.population_difference.iloc[0])
-    # else:
-    #     first_state_name = '-'
-    #     first_state_population = '-'
-    #     first_state_delta = ''
-    # st.metric(label=first_state_name, value=first_state_population, delta=first_state_delta)
-    #
-    # if selected_year > 2010:
-    #     last_state_name = df_population_difference_sorted.states.iloc[-1]
-    #     last_state_population = format_number(df_population_difference_sorted.population.iloc[-1])
-    #     last_state_delta = format_number(df_population_difference_sorted.population_difference.iloc[-1])
-    # else:
-    #     last_state_name = '-'
-    #     last_state_population = '-'
-    #     last_state_delta = ''
-    # st.metric(label=last_state_name, value=last_state_population, delta=last_state_delta)
+    ###### Logitud y tiempo
 
-    st.markdown('#### States Migration')
+    filtered_time = df_1[(df_1['Month'] == selected_month) & (df_1['Year'] == selected_year)]
+    filtered_time_1 = df_1[(df_1['Month'] == (selected_month-1)) & (df_1['Year'] == selected_year)]
+    time = round(sum(filtered_time['Time']), 2)
+    time_1 = round(sum(filtered_time_1['Time']),2 )
+    delta_time = round(time - time_1,2)
+    filtered_df6 = df_5[(df_5['Month'] == selected_month) & (df_5['Year'] == selected_year)]
+    filtered_df6_1 = df_5[(df_5['Month'] == (selected_month-1)) & (df_5['Year'] == selected_year)]
 
-    # if selected_year > 2010:
-    #     # Filter states with population difference > 50000
-    #     # df_greater_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference_absolute > 50000]
-    #     df_greater_50000 = df_population_difference_sorted[
-    #         df_population_difference_sorted.population_difference > 50000]
-    #     df_less_50000 = df_population_difference_sorted[df_population_difference_sorted.population_difference < -50000]
-    #
-    #     # % of States with population difference > 50000
-    #     states_migration_greater = round(
-    #         (len(df_greater_50000) / df_population_difference_sorted.states.nunique()) * 100)
-    #     states_migration_less = round((len(df_less_50000) / df_population_difference_sorted.states.nunique()) * 100)
-    #     donut_chart_greater = make_donut(states_migration_greater, 'Inbound Migration', 'green')
-    #     donut_chart_less = make_donut(states_migration_less, 'Outbound Migration', 'red')
-    # else:
-    #     states_migration_greater = 0
-    #     states_migration_less = 0
-    #     donut_chart_greater = make_donut(states_migration_greater, 'Inbound Migration', 'green')
-    #     donut_chart_less = make_donut(states_migration_less, 'Outbound Migration', 'red')
+    filtered_sap_df6 = df_6[(df_6['Month'] == selected_month) & (df_6['Year'] == selected_year)]
+    filtered_sap_df6_1 = df_6[(df_6['Month'] == (selected_month-1)) & (df_6['Year'] == selected_year)]
 
-    # migrations_col = st.columns((0.2, 1, 0.2))
-    # with migrations_col[1]:
-    #     st.write('Inbound')
-    #     st.altair_chart(donut_chart_greater)
-    #     st.write('Outbound')
-    #     st.altair_chart(donut_chart_less)
+
+
+    if len(filtered_sap_df6) > 0:
+
+        st.markdown('### Produccion')
+        kg = round(sum(filtered_sap_df6['Kg Producc']),2)
+        piezas  = round(sum(filtered_sap_df6['Tot.cant.p']), 2)
+        kg_1= round(sum(filtered_sap_df6_1['Kg Producc']),2)
+        piezas_1  = round(sum(filtered_sap_df6_1['Tot.cant.p']), 2)
+        delta_kg = round(kg - kg_1, 2)
+        delta_piezas = round(piezas-piezas_1, 2)
+        st.metric(label='Kg', value=kg, delta=delta_kg)
+        st.metric(label='Piezas', value=piezas, delta=delta_piezas)
+
+
+    st.markdown('- - - - - - - - - - ')
+    st.markdown('## Corte')
+    st.metric(label='Tiempo (min)', value=time, delta=delta_time)
+
+    if len(filtered_df6) > 0:
+        longitud_corte = round(sum(filtered_df6['Longitude Corte (m)']), 2)
+        longitud_corte_1 = round(sum(filtered_df6_1['Longitude Corte (m)']), 2)
+        delta_logitud = round(longitud_corte - longitud_corte_1, 2)
+
+            # time_corte = round(sum(filtered_df6['Time (min)']), 2)
+            # time_corte_1 = round(sum(filtered_df_1['Time (min)']), 2)
+
+        st.metric(label='Logitud (m)', value=longitud_corte, delta=delta_logitud)
+        # time_corte = round(sum(filtered_df6['Time (min)']), 2)
+        # time_corte_1 = round(sum(filtered_df_1['Time (min)']), 2)
+
+
+
+
+
+
+
 
 with col[1]:
     filtered_df4 = df_4[(df_4['Month'] == selected_month) & (df_4['Year'] == selected_year)]
@@ -212,4 +185,3 @@ with col[2]:
             - :orange[**Ubicacion**]: Coquimbo, Colina, Región Metropolitana
             ''')
 
-# pg.run()
