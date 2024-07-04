@@ -165,13 +165,15 @@ def plot_distribution(df, column, min_count=5):
             name=f'Promedio: {mean_value:.2f}, minutos',  # this will appear in the legend
         )
         fig.add_trace(trace, row=i, col=1)
-        fig.update_layout(
-            title_x=0.5  # Center title
-        )
+
 
         # Update layout properties
-        fig.update_layout(height=400 * len(months), width=800, showlegend=True,
-                          title_text=f'Tiempo entre inicio de corte Mes: {month}')
+        fig.update_layout(
+            # height=400 * len(months),
+            # width=800,
+            showlegend=False,
+            title_text=f'Promedio: {mean_value:.2f}, minutos'
+        )
 
     return fig
 
@@ -185,69 +187,47 @@ def plot_time(df):
     import plotly.graph_objects as go
     import plotly.subplots as sp
     import pandas as pd
-    # Convert 'Time' column to datetime.time
-    df['Time'] = pd.to_datetime(df['Time'], format='%H:%M:%S').dt.time
 
-    # Create a dummy date and combine it with time to create a datetime object
+    df['Time'] = pd.to_datetime(df['Time'], format='%H:%M:%S').dt.time
     dummy_date = date.today()
     df['Datetime'] = df['Time'].apply(lambda t: datetime.combine(dummy_date, t))
-
-    # Convert 'Date' column to a datetime data type
     df['Date'] = pd.to_datetime(df['Date'])
-
-    # Set 'Date' as the DataFrame index
     df.set_index('Date', inplace=True)
-
-    # Retrieve the unique months in the DataFrame
     months = df.index.to_period('M').unique()
-
+    annotations = []  # Initialize annotations list outside the loop
     fig = sp.make_subplots(rows=len(months), cols=1)
 
     for i, month in enumerate(months, start=1):
-        # Create a subset of the DataFrame for the current month
         df_month = df[df.index.to_period('M') == month]
-
-        # Calculate the mean time for this month
         mean_datetime = df_month['Datetime'].mean()
-
-        # Create a line plot with markers for this month
         scatter = go.Scatter(x=df_month.index.day,
                              y=df_month['Datetime'],
                              mode='markers+lines',
                              name='hour',
                              )
         fig.add_trace(scatter, row=i, col=1)
-
-        # Plot the mean time for this month
         mean_line = go.Scatter(x=[df_month.index.day.min(), df_month.index.day.max()],
                                y=[mean_datetime, mean_datetime],
                                mode='lines',
                                name=f'Promedio: {mean_datetime.time()}',
                                line=dict(color='red', dash='dash'))
-
         fig.add_trace(mean_line, row=i, col=1)
-
-
         fig.update_xaxes(title_text='Day', title_font=dict(size=18, color='black', family="Courier New, monospace"),
                          row=i, col=1)
         fig.update_yaxes(title_text='Hour of day', tickformat='%H:%M:%S', range=['00:00:00', '23:59:59'],
                          title_font=dict(size=18, color='black', family="Courier New, monospace"), row=i, col=1)
 
+        # Add current average time annotation to the list of all annotations
 
+
+        # Set annotations for every subplot in every iteration
         fig.update_layout(
-            height=550 * len(months),
-            title_x=0.5,  # Center title
-            width=1000,
-            showlegend=True,
-            title_text=f'Tiempo de inicio del Laser en: {month.strftime("%B %Y")}',
-            plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
-            paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
+            showlegend=False,
+            title_text=f'Hora promedio: {str(mean_datetime.time()).split('.')[0]}',
+            plot_bgcolor='rgba(254, 250, 250, 1)',
+            paper_bgcolor='rgba(254, 250, 250, 1)',
+            annotations=annotations  # this will update annotations of each subplot with the complete list
         )
-        fig.update_layout(
-            title_x=0.5  # Center title
-        )
-
-
     return fig
 
 import datetime
@@ -322,9 +302,7 @@ def create_barplot(df, x_col, y_col, x_title, y_title):
                  title=f'{x_title} Vs {y_title}')
     fig.update_layout(autosize=False, width=1200, height=800)
     fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-    fig.update_layout(
-        title_x=0.5  # Center title
-    )
+
 
     fig.update_layout(
         autosize=False,
@@ -369,18 +347,16 @@ def sunburst_plot(df: pd.DataFrame, options: list):
 
     fig.update_layout(
         autosize=True,
-        width=800,
-        height=800,
-        title_text=f'Resumen',
+        # width=800,
+        # height=800,
+        # title_text=f'Resumen',
         coloraxis_colorbar=dict(
             orientation="h",
             yanchor="bottom",
             y=-0.3,
         )
     )
-    fig.update_layout(
-        title_x=0.5  # Center title
-    )
+
 
     return fig
 
@@ -419,18 +395,28 @@ def plot_daily_time(filtered_df, selected_month):
     )
 
     fig.update_layout(
-        height=550,
-        width=1000,
-        showlegend=True,
-        title_text=f'Tiempo/Dia del mes {selected_month}',
+        # height=100,
+        # width=500,
+        showlegend=False,
+        title_text=f'Promedio: {round(time_avg, 2)} minutos',
+        # title_text=f'Tiempo/Dia del mes {selected_month}',
         plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
         paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
+        # annotations=[  # Add annotations
+        #     go.layout.Annotation(
+        #         showarrow=False,
+        #         text=f"Promedio: {round(time_avg, 2)}",
+        #         xref="paper",
+        #         yref="paper",
+        #         x=0.05,  # adjust these values depending on where you want the annotation
+        #         y=0.95,
+        #         font=dict(size=14, color='black'),
+        #     )
+        # ]
     )
     fig.update_xaxes(title_text="Time",
                      title_font=dict(size=18, color='black', family="Courier New, monospace"))
     fig.update_yaxes(title_text="Date",
                      title_font=dict(size=18, color='black', family="Courier New, monospace"))
-    fig.update_layout(
-        title_x=0.5  # Center title
-    )
+
     return fig
