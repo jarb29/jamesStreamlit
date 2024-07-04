@@ -221,9 +221,12 @@ def plot_time(df):
 
 
         # Set annotations for every subplot in every iteration
+        hora = str(mean_datetime.time())
+        hora_corta = hora.split('.')[0]
+
         fig.update_layout(
             showlegend=False,
-            title_text=f'Hora promedio: {str(mean_datetime.time()).split('.')[0]}',
+            title_text=f'Hora promedio: {hora_corta}',
             plot_bgcolor='rgba(254, 250, 250, 1)',
             paper_bgcolor='rgba(254, 250, 250, 1)',
             annotations=annotations  # this will update annotations of each subplot with the complete list
