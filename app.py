@@ -26,7 +26,9 @@ alerts = st.Page(
 tiempo = st.Page(
     "reports/tiempo_programa.py", title="Tiempo/Programa", icon=":material/notification_important:"
 )
-
+reporte = st.Page(
+    "reports/reporte.py", title="Reporte", icon=":material/history:"
+)
 search = st.Page("tools/search.py", title="Search", icon=":material/search:")
 history = st.Page("tools/history.py", title="History", icon=":material/history:")
 
@@ -34,7 +36,7 @@ if st.session_state.logged_in:
     pg = st.navigation(
         {
             "Account": [logout_page],
-            "Reports": [dashboard, bugs, alerts, tiempo],
+            "Reports": [dashboard, bugs, alerts, tiempo, reporte],
             "Tools": [search, history],
         }
     )

@@ -501,3 +501,23 @@ def total_machining_per_program(df):
         '%Y-%m-%d %H:%M:%S')  # formatting to your required format
 
     return total_machining_df
+
+
+def group_and_sum(df, group_column, sum_column):
+    output_df = df.groupby(group_column)[sum_column].sum().reset_index()
+    return output_df
+
+
+def transform_data(df):
+    df['Time (min)'] = df['total_machining'] / df['Programas cortados']
+
+    df.drop(['timestamp', 'program', 'Horas Teoricas', 'Horas Reales',
+             'Diferencia', 'Programas cortados', 'total_machining'], axis=1, inplace=True)
+
+    df_grouped = df.groupby('Espesor').agg({'Longitude Corte (m)': 'sum', 'Time (min)': 'sum'})
+    df_reset = df_grouped.reset_index()
+
+    df_reset['Velocidad (m/min)'] = round(df_reset['Longitude Corte (m)'] / df_reset['Time (min)'], 2)
+    df_reset = df_reset.sort_values(by='Espesor', ascending=True)
+
+    return df_reset

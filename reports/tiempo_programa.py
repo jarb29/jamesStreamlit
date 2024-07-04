@@ -20,7 +20,7 @@ fig = create_barplot(
     df=total_machining_df,
     x_col='program',
     y_col='total_machining',
-    x_title="Nombre del Programa", y_title="Tiempo de Corte (min)"
+    x_title="Nombre del Programa", y_title="Tiempo de Corte (min)",
 )
 
 st.plotly_chart(fig)

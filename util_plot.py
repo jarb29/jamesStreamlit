@@ -114,8 +114,10 @@ def plot_distribution(df, column, min_count=5):
             nbinsx=30,
             name=f'Mes: {month}',
             marker=dict(
+                color='rgba(245, 235, 235, 1)',  # this color code makes a soft gray color
                 line=dict(
-                    width=1  # Gives space between bars.
+                    color='rgba(0, 0, 0, 1)',  # this color code is used for black border
+                    width=2  # Gives space between bars.
                 )
             ),
         )
@@ -130,7 +132,7 @@ def plot_distribution(df, column, min_count=5):
             x0=mean_value,
             y0=0,
             x1=mean_value,
-            y1=1,
+            y1=2*max(values_to_keep),
             yref='paper',
             line=dict(
                 color="Red",
@@ -224,8 +226,15 @@ def plot_time(df):
         fig.update_yaxes(title_text='Hour of day', tickformat='%H:%M:%S',
                          range=['00:00:00', '23:59:59'], row=i, col=1)
 
-        fig.update_layout(height=400 * len(months), width=800, showlegend=True,
-                          title_text=f'Tiempo de inicio del Laser for {month.strftime("%B %Y")}')
+
+        fig.update_layout(
+            height=550 * len(months),
+            width=1000,
+            showlegend=True,
+            title_text=f'Tiempo de inicio del Laser for {month.strftime("%B %Y")}',
+            plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
+            paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
+        )
 
     return fig
 
@@ -302,8 +311,13 @@ def create_barplot(df, x_col, y_col, x_title, y_title):
     fig.update_layout(autosize=False, width=1200, height=800)
     fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
 
-    # Customize aspect
-    fig.update_layout(autosize=False)
+
+    fig.update_layout(
+        autosize=False,
+        showlegend=True,
+        plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
+        paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
+    )
 
     fig.update_xaxes(tickangle=45)
 
@@ -311,4 +325,72 @@ def create_barplot(df, x_col, y_col, x_title, y_title):
     # fig.write_image(f'plots/tiempo_programa_{"your_month"}.png')
 
     # Show the plot
+    return fig
+
+def sunburst_plot(df: pd.DataFrame, options: list):
+    longitud_total = round(sum(df['Longitude Corte (m)']), 2)
+    tiempo_total = round(sum(df['Time (min)']), 2)
+    df = df.loc[df.index.repeat(len(options))].reset_index(drop=True)
+    df['Option'] = options * len(df['Espesor'].unique())
+
+    print(longitud_total, tiempo_total)
+    print(df.head())
+    name_var = (f"Longitud: {longitud_total}\n"
+                f"Tiempo: {tiempo_total}")
+    df['root'] = "Espesor"
+
+    df['Value'] = df.apply(lambda row: round(row[row['Option']], 2), axis=1)
+
+    fig = px.sunburst(df,
+                      path=['root', 'Espesor', 'Option', 'Value'],
+                      color='Value',
+                      color_continuous_scale='Reds',
+                      color_discrete_sequence = px.colors.qualitative.G10,
+                      )
+    fig.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+
+    # Add an annotation
+
+    fig.update_layout(
+        autosize=True,
+        width=800,
+        height=800,
+        coloraxis_colorbar=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=-0.3,
+        )
+    )
+
+    return fig
+
+
+import plotly.graph_objects as go
+import plotly.express as px
+
+def plot_daily_time(filtered_df, selected_month):
+    fig = px.line(filtered_df, y="Time", x="Date")
+
+    fig.add_trace(
+        go.Scatter(
+            x=filtered_df["Date"],
+            y=filtered_df["Time"],
+            mode='markers',
+            marker=dict(
+                color='Red',
+            ),
+            text=filtered_df["Time"].round(2),
+            hovertemplate='%{text}',
+        )
+    )
+
+    fig.update_layout(
+        height=550,
+        width=1000,
+        showlegend=True,
+        title_text=f'Tiempo de Diario del mes {selected_month}',
+        plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
+        paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
+    )
+
     return fig

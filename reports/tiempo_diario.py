@@ -1,5 +1,5 @@
 from util_functions import *
-import plotly.express as px
+from util_plot import *
 import streamlit as st
 import plotly.graph_objects as go
 
@@ -20,21 +20,7 @@ selected_year = st.sidebar.selectbox('Select a year', years)
 filtered_df = grouped_df[(grouped_df['Month'] == selected_month) & (grouped_df['Year'] == selected_year)]
 
 
-# Assume that 'filtered_df' is your DataFrame
-fig = px.line(filtered_df, y="Time", x="Date")
-
-fig.add_trace(
-    go.Scatter(
-        x=filtered_df["Date"],
-        y=filtered_df["Time"],
-        mode='markers',
-        marker=dict(
-            color='red',
-        ),
-        text=filtered_df["Time"].round(2),
-        hovertemplate='%{text}',
-    )
-)
+fig = plot_daily_time(filtered_df, selected_month)
 
 st.plotly_chart(fig)
 
