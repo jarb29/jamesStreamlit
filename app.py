@@ -102,9 +102,9 @@ with col[0]:
         piezas_1  = round(sum(filtered_sap_df6_1['Tot.cant.p']), 2)
         delta_kg = round(kg - kg_1, 2)
         delta_piezas = round(piezas-piezas_1, 2)
-        st.metric(label='Kg', value=kg, delta=delta_kg)
+        st.metric(label='Kg. Cortados', value=kg, delta=delta_kg)
         st.markdown("<hr style='margin:25px 0px;width:50%;border-color:lightgray'>", unsafe_allow_html=True)
-        st.metric(label='Piezas', value=piezas, delta=delta_piezas)
+        st.metric(label='Cantidad de Piezas', value=piezas, delta=delta_piezas)
         st.markdown("<hr style='margin:25px 0px;width:50%;border-color:lightgray'>", unsafe_allow_html=True)
         st.metric(label="Espesor promedio", value=avg_espesor, delta=delta_espesor)
 
