@@ -60,7 +60,8 @@ st.set_page_config(
 alt.themes.enable("dark")
 
 with st.sidebar:
-    st.title("📅 Kupfer Nave1/Laser Dashboard")
+    st.sidebar.image("data/logo.png", use_column_width=True)
+    st.title("📅 Nave1/Laser Dashboard")
     selected_month = st.sidebar.selectbox('Select a month', months)
     selected_year = st.sidebar.selectbox('Select a year', years)
 
