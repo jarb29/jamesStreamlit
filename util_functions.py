@@ -550,3 +550,20 @@ def transform_data(df, timestamp_column):
     df_reset = df_reset.sort_values(by='Espesor', ascending=True)
 
     return df_reset
+
+
+def weighted_average_espesor(df):
+    """
+    Function to calculate the weighted average of 'Espesor' with 'Programas cortados' as weights
+    :param df: DataFrame
+    :return: float - weighted average of 'Espesor'
+    """
+    try:
+        total_programs = df['Programas cortados'].sum()
+        if total_programs == 0:
+            return 0
+        weighted_sum = (df['Espesor'] * df['Programas cortados']).sum()
+        weighted_average = weighted_sum / total_programs
+        return weighted_average
+    except Exception as e:
+        return 0

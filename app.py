@@ -85,6 +85,9 @@ with col[0]:
     filtered_df6 = df_5[(df_5['Month'] == selected_month) & (df_5['Year'] == selected_year)]
     filtered_df6_1 = df_5[(df_5['Month'] == (selected_month-1)) & (df_5['Year'] == selected_year)]
 
+    avg_espesor = round(weighted_average_espesor(filtered_df6), 2)
+    avg_espesor_1 = weighted_average_espesor(filtered_df6_1)
+    delta_espesor = round(avg_espesor-avg_espesor_1, 2)
     filtered_sap_df6 = df_6[(df_6['Month'] == selected_month) & (df_6['Year'] == selected_year)]
     filtered_sap_df6_1 = df_6[(df_6['Month'] == (selected_month-1)) & (df_6['Year'] == selected_year)]
 
@@ -100,13 +103,15 @@ with col[0]:
         delta_kg = round(kg - kg_1, 2)
         delta_piezas = round(piezas-piezas_1, 2)
         st.metric(label='Kg', value=kg, delta=delta_kg)
+        st.markdown("<hr style='margin:25px 0px;width:50%;border-color:lightgray'>", unsafe_allow_html=True)
         st.metric(label='Piezas', value=piezas, delta=delta_piezas)
-
+        st.markdown("<hr style='margin:25px 0px;width:50%;border-color:lightgray'>", unsafe_allow_html=True)
+        st.metric(label="Espesor promedio", value=avg_espesor, delta=delta_espesor)
 
     st.markdown('- - - - - - - - - - ')
     st.markdown('## Corte')
     st.metric(label='Tiempo (min)', value=time, delta=delta_time)
-
+    st.markdown("<hr style='margin:25px 0px;width:50%;border-color:lightgray'>", unsafe_allow_html=True)
     if len(filtered_df6) > 0:
         longitud_corte = round(sum(filtered_df6['Longitude Corte (m)']), 2)
         longitud_corte_1 = round(sum(filtered_df6_1['Longitude Corte (m)']), 2)
