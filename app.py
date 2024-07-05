@@ -85,9 +85,9 @@ with col[0]:
     filtered_df6 = df_5[(df_5['Month'] == selected_month) & (df_5['Year'] == selected_year)]
     filtered_df6_1 = df_5[(df_5['Month'] == (selected_month-1)) & (df_5['Year'] == selected_year)]
 
-    avg_espesor = round(weighted_average_espesor(filtered_df6), 2)
+    avg_espesor = round(weighted_average_espesor(filtered_df6))
     avg_espesor_1 = weighted_average_espesor(filtered_df6_1)
-    delta_espesor = round(avg_espesor-avg_espesor_1, 2)
+    delta_espesor = round(avg_espesor-avg_espesor_1)
     filtered_sap_df6 = df_6[(df_6['Month'] == selected_month) & (df_6['Year'] == selected_year)]
     filtered_sap_df6_1 = df_6[(df_6['Month'] == (selected_month-1)) & (df_6['Year'] == selected_year)]
 
