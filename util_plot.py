@@ -337,13 +337,18 @@ def sunburst_plot(df: pd.DataFrame, options: list):
 
     df['Value'] = df.apply(lambda row: round(row[row['Option']], 2), axis=1)
 
+
+
     fig = px.sunburst(df,
                       path=['root', 'Espesor', 'Option', 'Value'],
                       color='Value',
                       color_continuous_scale='Reds',
                       color_discrete_sequence = px.colors.qualitative.G10,
+
                       )
-    fig.update_traces(marker=dict(line=dict(color='#000000', width=2)))
+    fig.update_traces(marker=dict(line=dict(color='#000000', width=2)),
+                      hovertemplate='<b>%{label} </b>'
+                      )
 
     # Add an annotation
 
