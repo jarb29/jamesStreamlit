@@ -50,10 +50,6 @@ df_5, m5, y5 = extract_month_year(df_reset)
 corte_sap['Date'] = pd.to_datetime(corte_sap['Fec.Produc'], format='%d.%m.%Y')
 df_6, m6, y6 = extract_month_year(corte_sap)
 
-
-
-
-
 st.set_page_config(
     page_title="Kupfer Nave1/Laser Dashboard",
     page_icon="📉",
@@ -67,10 +63,6 @@ with st.sidebar:
     st.title("📅 Nave1/Laser Dashboard")
     selected_month = st.sidebar.selectbox('Select a month', months)
     selected_year = st.sidebar.selectbox('Select a year', years)
-
-
-
-
 
 #######################
 # Dashboard Main Panel
@@ -126,13 +118,6 @@ with col[0]:
         st.metric(label='Logitud (m)', value=longitud_corte, delta=delta_logitud)
         # time_corte = round(sum(filtered_df6['Time (min)']), 2)
         # time_corte_1 = round(sum(filtered_df_1['Time (min)']), 2)
-
-
-
-
-
-
-
 
 with col[1]:
     filtered_df4 = df_4[(df_4['Month'] == selected_month) & (df_4['Year'] == selected_year)]
