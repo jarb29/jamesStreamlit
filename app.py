@@ -36,10 +36,13 @@ df_4 = df_4.sort_values(by="total_machining")
 
 
 tiempo_total_df = group_and_sum(original_df_tiempo, 'timestamp', 'Espesor', 'Programas cortados')
+
 df_reset = transform_data(original_df_tiempo, 'timestamp')
-df_reset = pd.merge(tiempo_total_df , df_reset, on='Espesor')
-df_reset = df_reset.drop(columns='Date_y')  # drop one of the month columns
-df_reset = df_reset.rename(columns={'Date_x': 'Date'})  # rename 'month_x' to 'Month'
+
+df_reset = pd.merge(tiempo_total_df , df_reset, on=['Espesor', 'Date'])
+
+# df_reset = df_reset.drop(columns='Date_y')  # drop one of the month columns
+# df_reset = df_reset.rename(columns={'Date_x': 'Date'})  # rename 'month_x' to 'Month'
 df_5, m5, y5 = extract_month_year(df_reset)
 
 #################################################

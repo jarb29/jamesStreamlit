@@ -326,31 +326,33 @@ def create_barplot(df, x_col, y_col, x_title, y_title):
     # Show the plot
     return fig
 
+
 def sunburst_plot(df: pd.DataFrame, options: list):
+    df_list = []  # A list to hold dataframes for each Espesor
+    unique_esp = df['Espesor'].unique()
 
-    df = df.loc[df.index.repeat(len(options))].reset_index(drop=True)
-    df['Option'] = options * len(df['Espesor'].unique())
+    for esp in unique_esp:
+        temp_df = pd.DataFrame({'Espesor': [esp] * len(options), 'Option': options})
 
+        # Calculating mean value for each option. Replace 'mean' with 'sum'
+        # for total instead of average if that's what you need.
+        temp_df['Value'] = [round(df[df['Espesor'] == esp][option].mean(), 2) for option in options]
+        df_list.append(temp_df)
 
+    final_df = pd.concat(df_list, ignore_index=True)
 
-    df['root'] = "Espesor"
+    final_df['root'] = "Espesor"
 
-    df['Value'] = df.apply(lambda row: round(row[row['Option']], 2), axis=1)
-
-
-
-    fig = px.sunburst(df,
+    fig = px.sunburst(final_df,
                       path=['root', 'Espesor', 'Option', 'Value'],
                       color='Value',
                       color_continuous_scale='Reds',
-                      color_discrete_sequence = px.colors.qualitative.G10,
-
+                      color_discrete_sequence=px.colors.qualitative.G10,
                       )
+
     fig.update_traces(marker=dict(line=dict(color='#000000', width=2)),
                       hovertemplate='<b>%{label} </b>'
                       )
-
-    # Add an annotation
 
     fig.update_layout(
         autosize=True,
@@ -360,10 +362,9 @@ def sunburst_plot(df: pd.DataFrame, options: list):
         coloraxis_colorbar=dict(
             orientation="h",
             yanchor="bottom",
-            y=-0.3,
+            y=-0.3
         )
     )
-
 
     return fig
 
