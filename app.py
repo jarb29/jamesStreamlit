@@ -35,6 +35,7 @@ with col[0]:
 
     ###### Logitud y tiempo
     original_df = pd.read_csv(f'data/saved_df_{selected_year}_{selected_month}.csv')
+    original_df_1 = pd.read_csv(f'data/saved_df_{selected_year}_{selected_month-1}.csv')
     # first plot tiempo_diario
     df_1 = group_by_date(original_df)
     df_1 = extract_month_year(df_1)
@@ -61,7 +62,9 @@ with col[0]:
     ##############################################
 
     filtered_time = df_1[(df_1['Month'] == selected_month) & (df_1['Year'] == selected_year)]
-    filtered_time_1 = df_1[(df_1['Month'] == (selected_month-1)) & (df_1['Year'] == selected_year)]
+
+
+    filtered_time_1 = original_df_1[(original_df_1['Month'] == (selected_month-1)) & (original_df_1['Year'] == selected_year)]
     time = round(sum(filtered_time['Time']), 2)
     time_1 = round(sum(filtered_time_1['Time']),2 )
     delta_time = round(time - time_1, 2)
