@@ -292,11 +292,11 @@ def group_by_date(df):
 
     # Removing text from Messages and extract time values
     tiempo_total['Message'] = tiempo_total['Message'].str.replace('Total machining:', '')
-    tiempo_total['Time'] = pd.to_numeric(tiempo_total['Message'].str.extract('(\d+.\d+) ')[0])
+    tiempo_total['Time'] = pd.to_numeric(tiempo_total['Message'].str.extract(r'(\d+.\d+) ')[0])
 
-    # Ensure 'Timestamp' is in datetime format and extract the date.
-    # This time, we'll add year 2024 to the 'Date' field
-    tiempo_total['Date'] = pd.to_datetime("2024-" + tiempo_total['Timestamp'].str.split(' ').str[0], format='%Y-%m/%d')
+    # Extract the date part from 'Timestamp' without adding "2024-"
+    tiempo_total['Timestamp'] = pd.to_datetime(tiempo_total['Timestamp'])
+    tiempo_total['Date'] = tiempo_total['Timestamp'].dt.date
 
     # Group by 'Date' and calculate the sum of 'Time' for each date
     grouped_tiempo_total = tiempo_total.groupby('Date')['Time'].sum().reset_index()
@@ -330,11 +330,10 @@ def time_between_placas(df, filters):
     # Sort the DataFrame by 'Timestamp'
     final_df = final_df.sort_values('Timestamp')
 
-    # Convert 'Timestamp' to datetime format and replace year with the current year
-    final_df['Timestamp'] = pd.to_datetime(final_df['Timestamp'], format='%m/%d %H:%M:%S')
-    final_df['Timestamp'] = final_df['Timestamp'].map(lambda x: x.replace(year=pd.Timestamp.now().year))
+    # Convert 'Timestamp' to datetime format
+    final_df['Timestamp'] = pd.to_datetime(final_df['Timestamp'], format='%Y-%m-%d %H:%M:%S')
 
-    # Create a Date column which is the date part of the Timestamp
+    # Create a 'Date' column which is the date part of the 'Timestamp'
     final_df['Date'] = final_df['Timestamp'].dt.date
 
     # Group by the 'Date' column and calculate the difference within each group
@@ -354,16 +353,16 @@ def time_between_placas(df, filters):
 
     return final_df, timestamp_diff_df
 
-
 def first_occurrence_per_date(df, column, search_str):
+    from datetime import datetime
     # Filter rows which contain search string
     df_search = df[df[column].str.contains(search_str, case=False, na=False)].copy()
 
     # Convert 'Timestamp' to datetime
-    df_search['Timestamp'] = pd.to_datetime(df_search['Timestamp'], format='%m/%d %H:%M:%S')
+    df_search['Timestamp'] = pd.to_datetime(df_search['Timestamp'], format='%Y-%m-%d %H:%M:%S')
 
     # Assign current year
-    now = datetime.datetime.now()
+    now = datetime.now()
     df_search.loc[:, 'Timestamp'] = df_search['Timestamp'].map(lambda dt: dt.replace(year=now.year))
 
     # Extract date and time
@@ -375,8 +374,32 @@ def first_occurrence_per_date(df, column, search_str):
     df_first_occurrence = df_first_occurrence.drop(columns=['Timestamp'])
 
     return df_first_occurrence
+from datetime import datetime
+def get_months_and_years_since(date_str):
 
+    initial_date = datetime.strptime(date_str, "%d/%m/%Y")
+    current_date = datetime.now()
 
+    months = set()
+    years = set()
+
+    while initial_date <= current_date:
+        months.add(initial_date.month)
+        years.add(initial_date.year)
+        initial_date = add_months(initial_date, 1)
+
+    # Separate current month and year
+    cur_month = current_date.month
+    cur_year = current_date.year
+
+    return sorted(list(months)), sorted(list(years)), cur_month, cur_year
+
+def add_months(date, months):
+    month = date.month - 1 + months
+    year = date.year + month // 12
+    month = month % 12 + 1
+    day = min(date.day, [31,29,31,30,31,30,31,31,30,31,30,31][month-1])
+    return datetime(year, month, day)
 def extract_month_year(df):
     df['Date'] = pd.to_datetime(df['Date'])
 
@@ -384,11 +407,7 @@ def extract_month_year(df):
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year
 
-    # Get a list of unique months and years
-    months = df['Month'].unique()
-    years = df['Year'].unique()
-
-    return df, months, years
+    return df
 
 
 def get_surrounding_rows(df, messages, column, x):
@@ -412,13 +431,11 @@ def get_surrounding_rows(df, messages, column, x):
     return surrounding_rows.drop_duplicates()
 
 def filter_open_file_messages(df, month):
-    from datetime import datetime
     """
-    Filters a DataFrame based on 'Open File' messages and a certain month, and
-    sorts it by the 'Timestamp' column.
+    Filters a DataFrame based on 'Open File' messages and a certain month.
 
     :param df: DataFrame to filter. It should include 'Message' and 'Timestamp' columns.
-               The 'Timestamp' column should be in 'MM/DD HH:MM:SS' format.
+               The 'Timestamp' should be in string format representing datetime.
     :param month: The target month as an integer. For example, 1 for January, 2 for February, etc.
     :return: The filtered DataFrame.
     """
@@ -428,13 +445,8 @@ def filter_open_file_messages(df, month):
     message_filter = (~file_messages) | (file_messages & ~shifted_file_messages.str.contains('Open File'))
     filtered_df = df.loc[message_filter]
 
-
-    year = datetime.now().year
-    # Add the year to 'Timestamp' values
-    filtered_df['Timestamp'] = str(year) + '/' + filtered_df['Timestamp']
-
     # Convert 'Timestamp' to datetime object
-    filtered_df['Timestamp'] = pd.to_datetime(filtered_df['Timestamp'], format='%Y/%m/%d %H:%M:%S')
+    filtered_df['Timestamp'] = pd.to_datetime(filtered_df['Timestamp'])
 
     # Filter rows based on the provided month
     filtered_df = filtered_df[filtered_df['Timestamp'].dt.month == month]
