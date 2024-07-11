@@ -68,8 +68,8 @@ with col[0]:
 
 
     filtered_time_1 = original_df_1[(original_df_1['Month'] == (selected_month-1)) & (original_df_1['Year'] == selected_year)]
-    time = round(sum(filtered_time['Time']), 2)
-    time_1 = round(sum(filtered_time_1['Time']),2 )
+    time = round(sum(filtered_time['Time']/60), 2)
+    time_1 = round(sum(filtered_time_1['Time']/60),2 )
     delta_time = round(time - time_1, 2)
 
 
@@ -114,7 +114,7 @@ with col[0]:
 
     st.markdown('- - - - - - - - - - ')
     st.markdown('## Corte')
-    st.metric(label='Tiempo (min)', value=time, delta=delta_time)
+    st.metric(label='Tiempo (Hr)', value=time, delta=delta_time)
     st.markdown("<hr style='margin:25px 0px;width:50%;border-color:lightgray'>", unsafe_allow_html=True)
     if len(filtered_df6) > 0:
         longitud_corte = round(sum(filtered_df6['Longitude Corte (m)']), 2)
