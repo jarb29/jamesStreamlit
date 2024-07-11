@@ -35,7 +35,10 @@ with col[0]:
 
     ###### Logitud y tiempo
     original_df = pd.read_csv(f'data/saved_df_{selected_year}_{selected_month}.csv')
-    original_df_1 = pd.read_csv(f'data/saved_df_{selected_year}_{selected_month-1}.csv')
+    var1 = selected_month-1
+    if selected_month == 4 and selected_year == 2024:
+        var1 = selected_month
+    original_df_1 = pd.read_csv(f'data/saved_df_{selected_year}_{var1}.csv')
 
     # first plot tiempo_diario
     df_1 = group_by_date(original_df)
