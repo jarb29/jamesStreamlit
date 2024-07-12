@@ -8,7 +8,7 @@ from util_plot import *
 corte_sap = pd.read_excel('data/CORTE_SAP.xlsx')
 original_df_tiempo = pd.read_excel('data/tiempo_final.xlsx')
 months, years, cm, cy = get_months_and_years_since("01/04/2024")
-print(months, years, cm, cy, 'XXXXXXXXXXXXXXXXXXXXXX')
+
 
 st.set_page_config(
     page_title="Kupfer Nave1/Laser Dashboard",
