@@ -19,7 +19,6 @@ st.set_page_config(
 
 alt.themes.enable("dark")
 
-
 with st.sidebar:
     st.sidebar.image("data/logo.png", use_column_width=True)
     st.title("📅 Nave1/Laser Dashboard")
