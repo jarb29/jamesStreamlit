@@ -16,9 +16,7 @@ st.set_page_config(
     page_icon="📉",
     layout="wide",
     initial_sidebar_state="expanded")
-
 alt.themes.enable("dark")
-
 with st.sidebar:
     st.sidebar.image("data/logo.png", use_column_width=True)
     st.title("📅 Nave1/Laser Dashboard")
@@ -26,13 +24,10 @@ with st.sidebar:
     default_years_index = years.index(cy)
     selected_month = st.sidebar.selectbox('Select a month', months, index=default_month_index)
     selected_year = st.sidebar.selectbox('Select a year', years, index=default_years_index)
-
 #######################
 # Dashboard Main Panel
 col = st.columns((2, 4, 4), gap='medium')
-
 with col[0]:
-
     ###### Logitud y tiempo
     original_df = pd.read_csv(f'data/saved_df_{selected_year}_{selected_month}.csv')
     var1 = selected_month-1
