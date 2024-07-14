@@ -9,8 +9,6 @@ corte_sap = pd.read_excel('data/CORTE_SAP.xlsx')
 corte_sap =  strip_column_names(corte_sap)
 original_df_tiempo = pd.read_excel('data/tiempo_final.xlsx')
 months, years, cm, cy = get_months_and_years_since("01/04/2024")
-
-
 st.set_page_config(
     page_title="Kupfer Nave1/Laser Dashboard",
     page_icon="📉",
