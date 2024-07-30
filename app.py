@@ -84,6 +84,7 @@ with col[0]:
 
     corte_sap['Date'] = pd.to_datetime(corte_sap['Fec.Produc'], format='%d.%m.%Y')
 
+
     avg_espesor = round(weighted_average_espesor(filtered_df6))
     avg_espesor_1 = weighted_average_espesor(filtered_df6_1)
     delta_espesor = round(avg_espesor - avg_espesor_1)
