@@ -26,7 +26,7 @@ with st.sidebar:
 # Dashboard Main Panel
 col = st.columns((2, 4, 4), gap='medium')
 with col[0]:
-    ###### Logitud y tiempo
+    ###### Logitud y ti
     original_df = pd.read_csv(f'data/saved_df_{selected_year}_{selected_month}.csv')
     var1 = selected_month-1
     if selected_month == 4 and selected_year == 2024:
