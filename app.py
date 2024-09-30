@@ -72,7 +72,6 @@ with col[0]:
     tiempo_total_df = group_and_sum(original_df_tiempo, 'timestamp', 'Espesor', 'Programas cortados')
 
     df_reset = transform_data(original_df_tiempo, 'timestamp')
-
     df_5 = pd.merge(tiempo_total_df, df_reset, on=['Espesor', 'Date'])
     df_5 = extract_month_year(df_5)
     filtered_df6 = df_5[(df_5['Month'] == selected_month) & (df_5['Year'] == selected_year)]
@@ -89,18 +88,22 @@ with col[0]:
     avg_espesor_1 = weighted_average_espesor(filtered_df6_1)
     delta_espesor = round(avg_espesor - avg_espesor_1)
     corte_sap = extract_month_year(corte_sap)
+
     filtered_sap_df6 = corte_sap[(corte_sap['Month'] == selected_month) & (corte_sap['Year'] == selected_year)]
     filtered_sap_df6_1 = corte_sap[(corte_sap['Month'] == (selected_month - 1)) & (corte_sap['Year'] == selected_year)]
+
     ##################################
 
 
     if len(filtered_sap_df6) > 0:
 
         st.markdown('### Produccion')
-        kg = round(sum(filtered_sap_df6['Kg Producc']),2)
-        piezas  = round(sum(filtered_sap_df6['Tot.cant.p']), 2)
-        kg_1= round(sum(filtered_sap_df6_1['Kg Producc']),2)
-        piezas_1  = round(sum(filtered_sap_df6_1['Tot.cant.p']), 2)
+        kg = round(filtered_sap_df6['Kg Producc'].sum(skipna=True), 2)
+        piezas  = round(filtered_sap_df6['Tot.cant.p'].sum(skipna=True), 2)
+
+        kg_1= round(filtered_sap_df6_1['Kg Producc'].sum(skipna=True), 2)
+        piezas_1  = round(filtered_sap_df6_1['Tot.cant.p'].sum(skipna=True), 2)
+
         delta_kg = round(kg - kg_1, 2)
         delta_piezas = round(piezas-piezas_1, 2)
         st.metric(label='Kg. Cortados', value=kg, delta=delta_kg)
@@ -114,8 +117,8 @@ with col[0]:
     st.metric(label='Tiempo (Hr)', value=time, delta=delta_time)
     st.markdown("<hr style='margin:25px 0px;width:50%;border-color:lightgray'>", unsafe_allow_html=True)
     if len(filtered_df6) > 0:
-        longitud_corte = round(sum(filtered_df6['Longitude Corte (m)']), 2)
-        longitud_corte_1 = round(sum(filtered_df6_1['Longitude Corte (m)']), 2)
+        longitud_corte = round(filtered_df6['Longitude Corte (m)'].sum(skipna=True), 2)
+        longitud_corte_1 = round(filtered_df6_1['Longitude Corte (m)'].sum(skipna=True), 2)
         delta_logitud = round(longitud_corte - longitud_corte_1, 2)
 
             # time_corte = round(sum(filtered_df6['Time (min)']), 2)
