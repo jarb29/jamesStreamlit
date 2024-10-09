@@ -552,8 +552,7 @@ def transform_data(df, timestamp_column):
     df['Time (min)'] = df['total_machining'] / df['Programas cortados']
     df['Date'] = pd.to_datetime(df[timestamp_column]).dt.to_period('M').dt.to_timestamp()
 
-    df.drop(['timestamp', 'program', 'Horas Teoricas', 'Horas Reales',
-             'Diferencia', 'Programas cortados', 'total_machining'], axis=1, inplace=True)
+    df.drop(['timestamp', 'program', 'Programas cortados', 'total_machining'], axis=1, inplace=True)
 
     df_grouped = df.groupby(['Espesor', 'Date']).agg({'Longitude Corte (m)': 'sum', 'Time (min)': 'sum'})
     df_reset = df_grouped.reset_index()
