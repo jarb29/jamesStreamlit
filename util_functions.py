@@ -577,8 +577,6 @@ def weighted_average_espesor(df):
     except Exception as e:
         return 0
 
-
-
 def strip_column_names(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = df.columns.str.strip()
     return df
