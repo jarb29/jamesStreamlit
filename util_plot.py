@@ -149,7 +149,10 @@ def plot_distribution(df, column, min_count=5):
         fig.update_xaxes(title_text="Tiempo entre cortes", title_font=dict(size=18, color='black', family="Courier New, monospace"),
                          row=i, col=1)
         fig.update_yaxes(title_text="# repeticiones", title_font=dict(size=18, color='black', family="Courier New, monospace"), row=i, col=1)
-
+        fig.update_layout(
+            # ... other layout settings ...
+            font=dict(color='black')  # Set font color to black
+        )
         # Create a dummy scatter plot to add the mean value to the legend
         # Note: The point of this scatter plot is invisible
         trace = go.Scatter(
@@ -181,7 +184,7 @@ def plot_distribution(df, column, min_count=5):
 
 
 
-def plot_time(df):
+def  plot_time(df):
     from datetime import datetime, date, time
     import plotly.graph_objects as go
     import plotly.subplots as sp
@@ -223,13 +226,20 @@ def plot_time(df):
         hora = str(mean_datetime.time())
         hora_corta = hora.split('.')[0]
 
-        fig.update_layout(
-            showlegend=False,
-            title_text=f'Hora promedio: {hora_corta}',
-            plot_bgcolor='rgba(254, 250, 250, 1)',
-            paper_bgcolor='rgba(254, 250, 250, 1)',
-            annotations=annotations  # this will update annotations of each subplot with the complete list
-        )
+
+    font_style = dict(color="black", size=18, family="Courier New, monospace")
+
+    # Update layout and axes
+    fig.update_layout(
+        showlegend=False,
+        title_text=f'Hora promedio: {hora_corta}',
+        plot_bgcolor='rgba(254, 250, 250, 1)',
+        paper_bgcolor='rgba(254, 250, 250, 1)',
+        font=dict(color="black"),
+        annotations=annotations  # this will update annotations of each subplot with the complete list
+    )
+    fig.update_xaxes(title_text="Time", title_font=font_style, tickfont=font_style)  # Set x-tick font
+    fig.update_yaxes(title_text="Date", title_font=font_style, tickfont=font_style)  # Set y-tick font
     return fig
 
 import datetime
@@ -402,29 +412,17 @@ def plot_daily_time(filtered_df, selected_month):
         )
     )
 
+    # Define the font style
+    font_style = dict(color="black", size=18, family="Courier New, monospace")
+
+    # Update layout and axes
     fig.update_layout(
-        # height=100,
-        # width=500,
         showlegend=False,
         title_text=f'Promedio: {round(time_avg, 2)} minutos',
-        # title_text=f'Tiempo/Dia del mes {selected_month}',
-        plot_bgcolor='rgba(254, 250, 250, 1)',  # Color of the plot area
-        paper_bgcolor='rgba(254, 250, 250, 1)',  # Color of the area around the plot
-        # annotations=[  # Add annotations
-        #     go.layout.Annotation(
-        #         showarrow=False,
-        #         text=f"Promedio: {round(time_avg, 2)}",
-        #         xref="paper",
-        #         yref="paper",
-        #         x=0.05,  # adjust these values depending on where you want the annotation
-        #         y=0.95,
-        #         font=dict(size=14, color='black'),
-        #     )
-        # ]
+        plot_bgcolor='rgba(254, 250, 250, 1)',
+        paper_bgcolor='rgba(254, 250, 250, 1)',
+        font=font_style,  # Apply font style to all text elements
     )
-    fig.update_xaxes(title_text="Time",
-                     title_font=dict(size=18, color='black', family="Courier New, monospace"))
-    fig.update_yaxes(title_text="Date",
-                     title_font=dict(size=18, color='black', family="Courier New, monospace"))
-
+    fig.update_xaxes(title_text="Time", title_font=font_style, tickfont=font_style) # Set x-tick font
+    fig.update_yaxes(title_text="Date", title_font=font_style, tickfont=font_style) # Set y-tick font
     return fig
