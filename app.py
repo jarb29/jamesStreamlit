@@ -155,7 +155,8 @@ with col1:
         kg = round(filtered_sap_df6['Kg Producc'].sum(skipna=True), 2)
         piezas  = round(filtered_sap_df6['Tot.cant.p'].sum(skipna=True), 2)
         kg_1= round(filtered_sap_df6_1['Kg Producc'].sum(skipna=True), 2)
-        piezas_1  = round(filtered_sap_df6_1['Tot.cant.p'].sum(skipna=True), 2)
+        piezas_1  = float(round(filtered_sap_df6_1['Tot.cant.p'].sum(skipna=True), 2))
+
         delta_kg = round(kg - kg_1, 2)
         delta_piezas = round(piezas-piezas_1, 2)
         st.metric(label='Kg. Cortados', value=kg, delta=delta_kg)
