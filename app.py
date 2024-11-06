@@ -13,7 +13,7 @@ months, years, cm, cy = get_months_and_years_since("01/04/2024")
 
 # --- Streamlit Configuration ---
 st.set_page_config(
-    page_title="Kupfer Nave1/Laser Dashboard",
+    page_title="Dashboard/Laser",
     page_icon="📉",
     layout="wide",
     initial_sidebar_state="expanded")
