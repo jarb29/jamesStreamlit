@@ -206,7 +206,7 @@ with col2:
     # Plot 2: Tiempo entre Cortes
     st.markdown('<h4>Tiempo entre Cortes</h4>', unsafe_allow_html=True)
     filtered_df_2 = df_2[(df_2['Month'] == selected_month) & (df_2['Year'] == selected_year)]
-    fig2 = plot_distribution(filtered_df_2, 'Timestamp_Diff', min_count=5)
+    fig2 = plot_distribution(filtered_df_2, 'Timestamp_Diff', min_count=2)
     st.plotly_chart(fig2, use_container_width=True, height=400)
 
     # Plot 3: Tiempo de inicio del Laser

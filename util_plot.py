@@ -90,7 +90,7 @@ def plot_daily(df, date_col, val_col):
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-def plot_distribution(df, column, min_count=5):
+def plot_distribution(df, column, min_count=2):
     # Create a new column 'Month' from 'Date'
     df['Month'] = pd.DatetimeIndex(df['Date']).month
 
