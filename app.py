@@ -134,6 +134,7 @@ df_5 = extract_month_year(df_5)
 filtered_df6 = df_5[(df_5['Month'] == selected_month) & (df_5['Year'] == selected_year)]
 filtered_df6_1 = df_5[(df_5['Month'] == (selected_month - 1)) & (df_5['Year'] == selected_year)]
 
+
 corte_sap['Date'] = pd.to_datetime(corte_sap['Fec.Produc'], format='%d.%m.%Y')
 avg_espesor = round(weighted_average_espesor(filtered_df6))
 avg_espesor_1 = weighted_average_espesor(filtered_df6_1)
