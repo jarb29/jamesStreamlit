@@ -215,6 +215,7 @@ with col2:
     fig3 = plot_time(filtered_df3)
     st.plotly_chart(fig3, use_container_width=True, height=400)
 
+
     # Plot 4: Resumen
     filtered_df5 = df_5[(df_5['Month'] == selected_month) & (df_5['Year'] == selected_year)]
     if len(filtered_df5) > 0:
