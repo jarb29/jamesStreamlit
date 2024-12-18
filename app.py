@@ -82,7 +82,7 @@ div[data-testid="metric-container"] > div[data-testid="stMetricValue"] {
 
 # --- Sidebar ---
 with st.sidebar:
-    st.sidebar.image("data/logo.png", use_container_width=True)
+    st.sidebar.image("data/logo.png")
     st.title("📅 Nave1/Laser Dashboard")
     default_month_index = months.index(cm) - 1
     default_years_index = years.index(cy)
