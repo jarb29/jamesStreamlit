@@ -1,7 +1,4 @@
 import streamlit as st
-import altair as alt
-import pandas as pd
-import plotly.express as px
 from util_functions import *
 from util_plot import *
 
@@ -85,7 +82,7 @@ div[data-testid="metric-container"] > div[data-testid="stMetricValue"] {
 
 # --- Sidebar ---
 with st.sidebar:
-    st.sidebar.image("data/logo.png", use_column_width=True)
+    st.sidebar.image("data/logo.png", use_container_width=True)
     st.title("📅 Nave1/Laser Dashboard")
     default_month_index = months.index(cm) - 1
     default_years_index = years.index(cy)
