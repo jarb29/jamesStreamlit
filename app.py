@@ -102,13 +102,6 @@ if selected_month == 4 and selected_year == 2024:
 
 original_df_1 = pd.read_csv(f'data/saved_df_{selected_year}_{var1}.csv')
 
-if selected_month == 1 and selected_year == 2025:
-    var1 = 12
-    selected_year = 2024
-    original_df_1 = pd.read_csv(f'data/saved_df_{selected_year}_{var1}.csv')
-
-
-
 # Data processing for plots
 df_1 = group_by_date(original_df)
 df_1 = extract_month_year(df_1)
