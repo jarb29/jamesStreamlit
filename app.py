@@ -82,19 +82,32 @@ div[data-testid="metric-container"] > div[data-testid="stMetricValue"] {
 
 # --- Sidebar ---
 with st.sidebar:
-    st.sidebar.image("data/logo.png")
+    st.sidebar.image("data/logo.png", use_container_width=True)
     st.title("📅 Nave1/Laser Dashboard")
-    default_month_index = months.index(cm) - 1
+    if cm == 1:  # Assuming '1' corresponds to 'January'
+        default_month_index = months.index(cm)  # Leave as is
+    else:
+        default_month_index = months.index(cm) - 1  # Apply the formula
+
     default_years_index = years.index(cy)
     selected_month = st.sidebar.selectbox('Select a month', months, index=default_month_index)
     selected_year = st.sidebar.selectbox('Select a year', years, index=default_years_index)
 
 # --- Data Processing ---
 original_df = pd.read_csv(f'data/saved_df_{selected_year}_{selected_month}.csv')
+
 var1 = selected_month - 1
 if selected_month == 4 and selected_year == 2024:
     var1 = selected_month
+
 original_df_1 = pd.read_csv(f'data/saved_df_{selected_year}_{var1}.csv')
+
+if selected_month == 1 and selected_year == 2025:
+    var1 = 12
+    selected_year = 2024
+    original_df_1 = pd.read_csv(f'data/saved_df_{selected_year}_{var1}.csv')
+
+
 
 # Data processing for plots
 df_1 = group_by_date(original_df)
@@ -106,7 +119,9 @@ df_tiempo_, df_2 = time_between_placas(original_df, ["Layer: 1", "Total machinin
 df_2 = extract_month_year(df_2)
 
 df_3 = first_occurrence_per_date(original_df, 'Message', 'Layer: 1')
+
 df_3 = extract_month_year(df_3)
+
 
 messages = ["Open File: C:", 'Total machining', 'total', 'Layer: 1']
 new_message_df = get_surrounding_rows(original_df, messages, 'Message', 0)
@@ -204,12 +219,14 @@ with col2:
     # Plot 2: Tiempo entre Cortes
     st.markdown('<h4>Tiempo entre Cortes</h4>', unsafe_allow_html=True)
     filtered_df_2 = df_2[(df_2['Month'] == selected_month) & (df_2['Year'] == selected_year)]
+    # fig2 = plot_distribution(filtered_df_2, 'Timestamp_Diff', min_count=2)
     fig2 = plot_distribution(filtered_df_2, 'Timestamp_Diff', min_count=2)
     st.plotly_chart(fig2, use_container_width=True, height=400)
 
     # Plot 3: Tiempo de inicio del Laser
     st.markdown('<h4>Tiempo de inicio del Laser</h4>', unsafe_allow_html=True)
     filtered_df3 = df_3[(df_3['Month'] == selected_month) & (df_3['Year'] == selected_year)]
+
     fig3 = plot_time(filtered_df3)
     st.plotly_chart(fig3, use_container_width=True, height=400)
 

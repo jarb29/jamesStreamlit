@@ -2,7 +2,8 @@ import codecs
 import numpy as np
 import re
 import datetime
-
+import pandas as pd
+import os
 
 def rtf_to_dataframe(file_path):
     # Initialize an empty dataframe
@@ -104,9 +105,6 @@ def planchas_cortadas_day(df, message_filter, time_format='%m/%d/%Y %H:%M:%S', d
 #     result = pd.concat(dfs, ignore_index=True)
 #     return result
 
-
-import pandas as pd
-import os
 
 
 def read_all_rtf_in_dir(directory_path, save_folder, replace_flag):
@@ -352,26 +350,27 @@ def time_between_placas(df, filters):
     return final_df, timestamp_diff_df
 
 def first_occurrence_per_date(df, column, search_str):
-    from datetime import datetime
-    # Filter rows which contain search string
+    import pandas as pd
+
+    # Filter rows containing the search string in the specified column
     df_search = df[df[column].str.contains(search_str, case=False, na=False)].copy()
 
     # Convert 'Timestamp' to datetime
     df_search['Timestamp'] = pd.to_datetime(df_search['Timestamp'], format='%Y-%m-%d %H:%M:%S')
 
-    # Assign current year
-    now = datetime.now()
-    df_search.loc[:, 'Timestamp'] = df_search['Timestamp'].map(lambda dt: dt.replace(year=now.year))
+    # Extract Date and Time from the Timestamp (preserve the original year as well)
+    df_search['Date'] = df_search['Timestamp'].dt.date  # Includes year
+    df_search['Time'] = df_search['Timestamp'].dt.time
 
-    # Extract date and time
-    df_search['Date'] = [d.date() for d in df_search['Timestamp']]
-    df_search['Time'] = [d.time() for d in df_search['Timestamp']]
-
-    # Group by date, drop 'Timestamp' and get the first occurrence per date
+    # Sort data and group by Date to get the first occurrence per date (keep original year)
     df_first_occurrence = df_search.sort_values('Time').groupby('Date', as_index=False).first()
-    df_first_occurrence = df_first_occurrence.drop(columns=['Timestamp'])
+
+    # Filter to keep only the necessary columns
+    df_first_occurrence = df_first_occurrence[['Date', column, 'Time']]
 
     return df_first_occurrence
+
+
 from datetime import datetime
 def get_months_and_years_since(date_str):
 
@@ -398,13 +397,13 @@ def add_months(date, months):
     month = month % 12 + 1
     day = min(date.day, [31,29,31,30,31,30,31,31,30,31,30,31][month-1])
     return datetime(year, month, day)
+
+
 def extract_month_year(df):
     df['Date'] = pd.to_datetime(df['Date'])
-
     # Create month and year columns
     df['Month'] = df['Date'].dt.month
     df['Year'] = df['Date'].dt.year
-
     return df
 
 
@@ -541,9 +540,7 @@ def group_and_sum(df, timestamp_column, group_column, sum_column):
 #
 #     return df_reset
 
-import pandas as pd
 
-import pandas as pd
 
 
 def transform_data(df, timestamp_column):
