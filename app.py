@@ -52,7 +52,6 @@ div[data-testid="metric-container"] > div[data-testid="stMetricValue"] {
     font-size: 24px !important; 
     font-weight: bold !important; 
 }
-
 /* Plot Styling */
 .plotly-graph-svg {
     background-color: #ffffff;
